@@ -1,20 +1,90 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import "react-native-gesture-handler";
+import { StatusBar } from "expo-status-bar";
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import Homepage from "./pages/Home";
+import { Platform, View } from "react-native";
+import { useFonts } from "expo-font";
+import AppLoading from "expo-app-loading";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import { navigationRef } from "./RootNavigation";
+import NewsDetail from "./pages/NewsDetail";
+import AboutWorkEasy from "./pages/About";
+import Quotepage from "./pages/Quote";
+import Catalogpage from "./pages/Catalog";
+import CatalogDetail from "./pages/CatalogDetail";
+
+const Stack = createStackNavigator();
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+  let [fontsLoaded] = useFonts({
+    OpenSans: require("./assets/fonts/OpenSans-Regular.ttf"),
+  });
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  } else {
+    return (
+      <View
+        style={{
+          flex: 1,
+          paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+        }}
+      >
+        <NavigationContainer ref={navigationRef}>
+          <Stack.Navigator initialRouteName="WorkEasy" headerMode="screen">
+            <Stack.Screen
+              name="WorkEasy"
+              component={Homepage}
+              options={{
+                header: () => <Header headerDisplay="WorkEasy" />,
+              }}
+            />
+            <Stack.Screen
+              name="NewsDetail"
+              component={NewsDetail}
+              options={{
+                header: () => <Header headerDisplay="News" />,
+              }}
+            />
+            <Stack.Screen
+              name="About"
+              component={AboutWorkEasy}
+              options={{
+                header: () => (
+                  <Header headerDisplay="About WorkEasy Software" />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name="Quote"
+              component={Quotepage}
+              options={{
+                header: () => <Header headerDisplay="Get a quote" />,
+              }}
+            />
+            <Stack.Screen
+              name="Catalog"
+              component={Catalogpage}
+              options={{
+                header: () => (
+                  <Header headerDisplay="WorkEasy Software Robotics" />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name="CatalogDetail"
+              component={CatalogDetail}
+              options={{
+                header: () => <Header headerDisplay="Product Information" />,
+              }}
+            />
+          </Stack.Navigator>
+          <Footer />
+        </NavigationContainer>
+      </View>
+    );
+  }
+}
