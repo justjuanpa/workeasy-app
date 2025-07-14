@@ -1,6 +1,6 @@
 import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import { React, useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import Homepage from "./pages/Home";
@@ -15,15 +15,27 @@ import AboutWorkEasy from "./pages/About";
 import Quotepage from "./pages/Quote";
 import Catalogpage from "./pages/Catalog";
 import CatalogDetail from "./pages/CatalogDetail";
+import Login from "./pages/Login";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createStackNavigator();
 
 export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(null);
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      const token = await AsyncStorage.getItem("access_token");
+      setIsLoggedIn(!!token);
+    };
+    checkLoginStatus();
+  }, []);
+
   let [fontsLoaded] = useFonts({
     OpenSans: require("./assets/fonts/OpenSans-Regular.ttf"),
   });
 
-  if (!fontsLoaded) {
+  if (isLoggedIn === null || !fontsLoaded) {
     return <AppLoading />;
   } else {
     return (
@@ -34,7 +46,17 @@ export default function App() {
         }}
       >
         <NavigationContainer ref={navigationRef}>
-          <Stack.Navigator initialRouteName="WorkEasy" headerMode="screen">
+          <Stack.Navigator
+            initialRouteName={isLoggedIn ? "WorkEasy" : "Login"}
+            headerMode="screen"
+          >
+            <Stack.Screen
+              name="Login"
+              component={Login}
+              options={{
+                headerTitleAlign: "center",
+              }}
+            />
             <Stack.Screen
               name="WorkEasy"
               component={Homepage}
@@ -82,7 +104,6 @@ export default function App() {
               }}
             />
           </Stack.Navigator>
-          <Footer />
         </NavigationContainer>
       </View>
     );

@@ -25,7 +25,7 @@ export default function Quotepage({ route }) {
     } else {
       messageChange("");
     }
-  });
+  }, []);
 
   const postMessage = () => {
     if (!name | !email | !message) {
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: "black",
     borderWidth: 1,
-    fontSize: 26,
+    fontSize: 16,
     fontFamily: "OpenSans",
     width: 250,
   },
