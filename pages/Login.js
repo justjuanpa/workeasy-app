@@ -58,7 +58,14 @@ export default function Login() {
         // Save token locally
         await AsyncStorage.setItem("access_token", data.access_token);
         await AsyncStorage.setItem("tenant_id", tenantId);
-        navigationRef.current?.navigate("WorkEasy");
+        await AsyncStorage.setItem("client_id", clientId);
+        await AsyncStorage.setItem("client_secret", clientSecret);
+        const expirationTime = Date.now() + data.expires_in * 1000;
+        await AsyncStorage.setItem(
+          "token_expiration",
+          expirationTime.toString()
+        );
+        navigationRef.current?.navigate("EmployeeList");
       } else {
         Alert.alert(
           "Login failed",
